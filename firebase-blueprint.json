@@ -1,0 +1,165 @@
+{
+  "entities": {
+    "CampEvent": {
+      "title": "CampEvent",
+      "description": "English Camp event settings and rooming configurations",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "academicYear": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["draft", "open_selection", "closed_selection", "assignment_in_progress", "completed"] },
+        "selectionStartDate": { "type": "string" },
+        "selectionEndDate": { "type": "string" },
+        "responseEndDate": { "type": "string" },
+        "maxChoices": { "type": "number" },
+        "minChoices": { "type": "number" },
+        "allowEditChoices": { "type": "boolean" },
+        "allowRejectRequests": { "type": "boolean" },
+        "roomingMode": { "type": "string", "enum": ["pair", "multi", "custom", "flexible"] },
+        "targetCapacity": { "type": "number" },
+        "maxCapacity": { "type": "number" },
+        "minCapacity": { "type": "number" },
+        "allowPartialLastRoom": { "type": "boolean" },
+        "allowUnevenRooms": { "type": "boolean" },
+        "requireAllMemberConsent": { "type": "boolean" },
+        "assignmentMethod": { "type": "string", "enum": ["auto", "manual", "hybrid"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "status", "roomingMode", "targetCapacity"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "Student participating in English Camp",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentId": { "type": "string" },
+        "prefix": { "type": "string" },
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "classRoom": { "type": "string" },
+        "studentNo": { "type": "number" },
+        "gender": { "type": "string" },
+        "pinHash": { "type": "string" },
+        "pinSalt": { "type": "string" },
+        "mustChangePin": { "type": "boolean" },
+        "failedPinAttempts": { "type": "number" },
+        "isLocked": { "type": "boolean" },
+        "isEligible": { "type": "boolean" },
+        "eventId": { "type": "string" },
+        "hasSubmittedChoices": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "studentId", "firstName", "lastName", "classRoom", "studentNo"]
+    },
+    "PartnerRequest": {
+      "title": "PartnerRequest",
+      "description": "Partner request sent from student to student",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "eventId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderStudentId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderClassRoom": { "type": "string" },
+        "senderStudentNo": { "type": "number" },
+        "receiverId": { "type": "string" },
+        "receiverStudentId": { "type": "string" },
+        "receiverName": { "type": "string" },
+        "receiverClassRoom": { "type": "string" },
+        "receiverStudentNo": { "type": "number" },
+        "preferenceRank": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected", "cancelled", "closed", "expired"] },
+        "createdAt": { "type": "string" },
+        "respondedAt": { "type": "string" }
+      },
+      "required": ["id", "eventId", "senderId", "receiverId", "status", "preferenceRank"]
+    },
+    "Room": {
+      "title": "Room",
+      "description": "Room assignment in the camp",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "eventId": { "type": "string" },
+        "roomNumber": { "type": "string" },
+        "buildingOrZone": { "type": "string" },
+        "targetCapacity": { "type": "number" },
+        "maxCapacity": { "type": "number" },
+        "status": { "type": "string", "enum": ["draft_proposal", "pending_consent", "confirmed", "archived"] },
+        "memberIds": { "type": "string" },
+        "classRoomFilter": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "eventId", "roomNumber", "targetCapacity", "status"]
+    },
+    "RoomMember": {
+      "title": "RoomMember",
+      "description": "Member assignment in a room",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "roomId": { "type": "string" },
+        "eventId": { "type": "string" },
+        "studentId": { "type": "string" },
+        "studentDocId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "classRoom": { "type": "string" },
+        "studentNo": { "type": "number" },
+        "consentStatus": { "type": "string", "enum": ["pending", "consented", "review_requested"] },
+        "consentNote": { "type": "string" },
+        "assignedBy": { "type": "string" },
+        "assignedAt": { "type": "string" }
+      },
+      "required": ["id", "roomId", "studentDocId", "consentStatus"]
+    },
+    "ActivityLog": {
+      "title": "ActivityLog",
+      "description": "System and administrator activity audit log",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "eventId": { "type": "string" },
+        "action": { "type": "string" },
+        "category": { "type": "string" },
+        "details": { "type": "string" },
+        "performedBy": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "action", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/events/{eventId}": {
+      "schema": "CampEvent",
+      "description": "English Camp event records and configuration"
+    },
+    "/events/{eventId}/students/{studentDocId}": {
+      "schema": "Student",
+      "description": "Eligible students for a camp event"
+    },
+    "/events/{eventId}/requests/{requestId}": {
+      "schema": "PartnerRequest",
+      "description": "Partner requests between students"
+    },
+    "/events/{eventId}/rooms/{roomId}": {
+      "schema": "Room",
+      "description": "Room assignments and groups"
+    },
+    "/events/{eventId}/rooms/{roomId}/members/{memberId}": {
+      "schema": "RoomMember",
+      "description": "Individual student assignments to rooms"
+    },
+    "/events/{eventId}/logs/{logId}": {
+      "schema": "ActivityLog",
+      "description": "Audit trails for camp operations"
+    }
+  }
+}

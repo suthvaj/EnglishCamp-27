@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'phurixmada@gmail.com' ||
+        (request.auth.token.email_verified == true && request.auth.token.email.matches('.*@.*'))
+      );
+    }
+
+    // Events collection
+    match /events/{eventId} {
+      allow read, write: if true;
+
+      // Students subcollection
+      match /students/{studentDocId} {
+        allow read: if true;
+        allow write: if true; // Allows student PIN auth updates & admin management
+      }
+
+      // Partner requests subcollection
+      match /requests/{requestId} {
+        allow read: if true;
+        allow write: if true; // Allows students to create requests, accept, reject
+      }
+
+      // Rooms subcollection
+      match /rooms/{roomId} {
+        allow read: if true;
+        allow write: if true; // Allows admin room assignment & proposal consent updates
+
+        match /members/{memberId} {
+          allow read: if true;
+          allow write: if true;
+        }
+      }
+
+      // Activity logs
+      match /logs/{logId} {
+        allow read: if true;
+        allow write: if true;
+      }
+    }
+
+    // Direct test connection document
+    match /test/connection {
+      allow read, write: if true;
+    }
+  }
+}
